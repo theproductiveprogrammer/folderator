@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 //
-// folderator.js
+// folderator
 //
-// Usage: ./folderator [folders-file]
+// Usage: ./folderator [folder-list-file]
 //
 const fs = require("fs");
 const os = require("os");
@@ -11,13 +11,18 @@ const { spawn } = require("child_process");
 
 const foldersFile = process.argv[2];
 if (!foldersFile) {
-  console.error("Specify folder list file");
+  console.log(`folderator: quickly work in a subset of folders
+Usage: folderator <folder-list-file>
+    where folder-list-file : file containing list of folders (one per line)
+    `);
   process.exit(2);
 }
 if (!fs.existsSync(foldersFile)) {
   console.error(`Folders list file not found: ${foldersFile}`);
   process.exit(2);
 }
+
+const currName = path.basename(foldersFile);
 
 const lines = fs
   .readFileSync(foldersFile, "utf8")
@@ -81,18 +86,9 @@ zshrc += `
 iterate() {
   if (( $# == 0 )); then
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
-      echo "=== $d ==="
-      if command -v tmux >/dev/null 2>&1; then
-        tmux new-window -c "$d" "$SHELL"
-      elif command -v gnome-terminal >/dev/null 2>&1; then
-        gnome-terminal --working-directory="$d" &
-      elif command -v osascript >/dev/null 2>&1 && [[ "$(uname)" == "Darwin" ]]; then
-        osascript -e "tell application \\"Terminal\\" to do script \\"cd '$d'; exec $SHELL\\"" >/dev/null 2>&1 &
-      else
-        (cd "$d" && echo "Subshell in $d (exit to continue)" && $SHELL) &
-      fi
+      export PROMPT_CHAR='$${currName}-(itr)>'
+      (cd "$d" && echo "Iterating subshell in $d (exit to continue)" && $SHELL)
     done
-    wait
   else
     local cmd="$*"
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
@@ -103,7 +99,7 @@ iterate() {
 }
 `;
 
-// Source the normal ~/.zshrc
+// Source the existing ~/.zshrc
 zshrc += `
 
 if [ -f "${process.env.HOME}/.zshrc" ]; then
@@ -118,7 +114,7 @@ fs.writeFileSync(zshrcPath, zshrc, { mode: 0o600 });
 
 const child = spawn("zsh", ["-i"], {
   stdio: "inherit",
-  env: { ...process.env, ZDOTDIR: tmpDir, PROMPT_CHAR: `$${foldersFile}>` },
+  env: { ...process.env, ZDOTDIR: tmpDir, PROMPT_CHAR: `$${currName}>` },
 });
 
 child.on("exit", () => {
