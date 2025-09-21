@@ -12,17 +12,15 @@ A TypeScript tool for quickly working in a subset of folders with generated shel
 
 ## Installation
 
-### Global Installation (Recommended)
-
 1. Clone or download this repository
 2. Install globally:
 ```bash
-npm run install-global
+npm run deploy
 ```
 
-This will build the TypeScript code and make `folderator` available globally.
+This will build the TypeScript code and make `folderator` available.
 
-To uninstall globally:
+To uninstall:
 ```bash
 npm unlink -g folderator
 ```
@@ -44,7 +42,7 @@ npm run build
 ### Basic Usage
 
 ```bash
-# Using the global command (after installation)
+# Using the command (after installation)
 folderator <folder-list-file>
 
 # Or using the compiled JavaScript directly
