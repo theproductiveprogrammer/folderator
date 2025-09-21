@@ -12,6 +12,23 @@ A TypeScript tool for quickly working in a subset of folders with generated shel
 
 ## Installation
 
+### Global Installation (Recommended)
+
+1. Clone or download this repository
+2. Install globally:
+```bash
+npm run install-global
+```
+
+This will build the TypeScript code and make `folderator` available globally.
+
+To uninstall globally:
+```bash
+npm unlink -g folderator
+```
+
+### Local Development
+
 1. Install dependencies:
 ```bash
 npm install
@@ -27,7 +44,10 @@ npm run build
 ### Basic Usage
 
 ```bash
-# Using the compiled JavaScript
+# Using the global command (after installation)
+folderator <folder-list-file>
+
+# Or using the compiled JavaScript directly
 node dist/folderator.js <folder-list-file>
 
 # Or using ts-node for development
@@ -71,7 +91,7 @@ my-custom-name: ../../my-custom-folder
 backend: /Users/username/special-project" > my-folders.txt
 
 # Run folderator
-npm run dev my-folders.txt
+folderator my-folders.txt
 
 # In the generated shell:
 go-app1              # Navigate to app1

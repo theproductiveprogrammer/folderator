@@ -4,13 +4,14 @@
   "description": "Quickly work in a subset of folders with generated shell aliases",
   "main": "dist/folderator.js",
   "bin": {
-    "folderator": "dist/folderator.js"
+    "folderator": "./dist/folderator.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x dist/folderator.js",
     "start": "node dist/folderator.js",
     "dev": "ts-node folderator.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "install-global": "npm run build && npm link"
   },
   "keywords": [
     "shell",

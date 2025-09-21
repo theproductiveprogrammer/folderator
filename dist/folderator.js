@@ -3,7 +3,7 @@
 //
 // folderator
 //
-// Usage: ./folderator [folder-list-file]
+// Usage: folderator [folder-list-file]
 //
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -110,7 +110,7 @@ class Folderator {
     parseFolderLine(line) {
         const trimmedLine = line.trim();
         // Check if line has the "name:" format
-        const colonIndex = trimmedLine.indexOf(':');
+        const colonIndex = trimmedLine.indexOf(":");
         if (colonIndex > 0) {
             const name = trimmedLine.substring(0, colonIndex).trim();
             const pathPart = trimmedLine.substring(colonIndex + 1).trim();
@@ -271,7 +271,7 @@ if (!foldersFile) {
     console.log(chalk_1.default.yellow("Usage: folderator <folder-list-file>"));
     console.log(chalk_1.default.gray("    where folder-list-file : file containing list of folders (one per line)"));
     console.log();
-    console.log(chalk_1.default.gray("    Use \"name: /path/to/folder\" for custom alias names"));
+    console.log(chalk_1.default.gray('    Use "name: /path/to/folder" for custom alias names'));
     console.log();
     process.exit(2);
 }

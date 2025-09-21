@@ -2,7 +2,7 @@
 //
 // folderator
 //
-// Usage: ./folderator [folder-list-file]
+// Usage: folderator [folder-list-file]
 //
 
 import * as fs from "fs";
