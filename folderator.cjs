@@ -112,6 +112,13 @@ const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "folderator-"));
 const zshrcPath = path.join(tmpDir, ".zshrc");
 fs.writeFileSync(zshrcPath, zshrc, { mode: 0o600 });
 
+console.log(currName);
+console.log("commands available:");
+for (const a of aliasPairs) {
+  console.log("    " + a.alias);
+}
+console.log("    iterate");
+
 const child = spawn("zsh", ["-i"], {
   stdio: "inherit",
   env: { ...process.env, ZDOTDIR: tmpDir, PROMPT_CHAR: `$${currName}>` },
