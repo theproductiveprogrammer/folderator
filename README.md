@@ -7,6 +7,7 @@ A TypeScript tool for quickly working in a subset of folders with generated shel
 - Generate shell aliases for quick navigation to specific folders
 - Interactive shell with custom prompt
 - Iterate through folders with commands
+- Beautiful colored output with emojis and visual indicators
 - Clean TypeScript implementation with proper error handling
 
 ## Installation
@@ -78,3 +79,5 @@ iterate "git status"  # Run git status in all folders
 - Proper error handling
 - Clean class-based architecture
 - Interface definitions for type safety
+- Beautiful colored output with chalk
+- Emoji indicators for better UX

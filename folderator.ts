@@ -9,6 +9,7 @@ import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
 import { spawn, ChildProcess } from "child_process";
+import chalk from "chalk";
 
 interface AliasPair {
 	alias: string;
@@ -46,23 +47,31 @@ class Folderator {
 		try {
 			if (!fs.existsSync(this.config.foldersFile)) {
 				console.error(
-					`Folders list file not found: ${this.config.foldersFile}`
+					chalk.red.bold("❌ Folders list file not found:"),
+					chalk.yellow(this.config.foldersFile)
 				);
 				process.exit(2);
 			}
 		} catch (error) {
 			console.error(
-				`Error checking file existence: ${error instanceof Error ? error.message : "Unknown error"}`
+				chalk.red.bold("❌ Error checking file existence:"),
+				chalk.red(error instanceof Error ? error.message : "Unknown error")
 			);
 			process.exit(2);
 		}
 	}
 
 	private printUsage(): void {
-		console.log(`folderator: quickly work in a subset of folders
-Usage: folderator <folder-list-file>
-    where folder-list-file : file containing list of folders (one per line)
-    `);
+		console.log(
+			chalk.blue.bold(`folderator: quickly work in a subset of folders`)
+		);
+		console.log(chalk.yellow(`Usage: folderator <folder-list-file>`));
+		console.log(
+			chalk.gray(
+				`    where folder-list-file : file containing list of folders (one per line)`
+			)
+		);
+		console.log();
 	}
 
 	private loadFolders(): void {
@@ -74,12 +83,16 @@ Usage: folderator <folder-list-file>
 				.filter(Boolean);
 
 			if (this.config.lines.length === 0) {
-				console.error("No folders found in", this.config.foldersFile);
+				console.error(
+					chalk.red.bold("❌ No folders found in"),
+					chalk.yellow(this.config.foldersFile)
+				);
 				process.exit(2);
 			}
 		} catch (error) {
 			console.error(
-				`Error reading folders file: ${error instanceof Error ? error.message : "Unknown error"}`
+				chalk.red.bold("❌ Error reading folders file:"),
+				chalk.red(error instanceof Error ? error.message : "Unknown error")
 			);
 			process.exit(2);
 		}
@@ -154,12 +167,12 @@ iterate() {
   if (( $# == 0 )); then
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
       export PROMPT_CHAR='$${this.config.currName}-(itr)>'
-      (cd "$d" && echo "Iterating subshell in $d (exit to continue)" && $SHELL)
+      (cd "$d" && echo "\\033[1;36m📁 Iterating subshell in $d (exit to continue)\\033[0m" && $SHELL)
     done
   else
     local cmd="$*"
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
-      echo "=== $d ==="
+      echo "\\033[1;33m=== $d ===\\033[0m"
       (cd "$d" && eval "$cmd")
     done
   fi
@@ -188,19 +201,31 @@ fi
 			return tmpDir;
 		} catch (error) {
 			console.error(
-				`Error creating temporary environment: ${error instanceof Error ? error.message : "Unknown error"}`
+				chalk.red.bold("❌ Error creating temporary environment:"),
+				chalk.red(error instanceof Error ? error.message : "Unknown error")
 			);
 			process.exit(2);
 		}
 	}
 
 	private printAvailableCommands(): void {
-		console.log(this.config.currName);
-		console.log("commands available:");
+		console.log();
+		console.log(chalk.blue.bold("📁"), chalk.blue.bold(this.config.currName));
+		console.log(chalk.green.bold("✨ Commands available:"));
 		for (const alias of this.config.aliasPairs) {
-			console.log("    " + alias.alias);
+			console.log(
+				chalk.gray("    "),
+				chalk.blue(alias.alias),
+				chalk.gray("→"),
+				chalk.dim(alias.path)
+			);
 		}
-		console.log("    iterate");
+		console.log(
+			chalk.gray("    "),
+			chalk.magenta("iterate"),
+			chalk.gray("→ run commands across all folders")
+		);
+		console.log();
 	}
 
 	private spawnZsh(tmpDir: string): ChildProcess {
@@ -219,7 +244,10 @@ fi
 			fs.rmSync(tmpDir, { recursive: true, force: true });
 		} catch (error) {
 			console.error(
-				`Warning: Failed to cleanup temporary directory: ${error instanceof Error ? error.message : "Unknown error"}`
+				chalk.yellow.bold(
+					"⚠️  Warning: Failed to cleanup temporary directory:"
+				),
+				chalk.yellow(error instanceof Error ? error.message : "Unknown error")
 			);
 		}
 	}
@@ -244,10 +272,16 @@ fi
 // Main execution
 const foldersFile = process.argv[2];
 if (!foldersFile) {
-	console.log(`folderator: quickly work in a subset of folders
-Usage: folderator <folder-list-file>
-    where folder-list-file : file containing list of folders (one per line)
-    `);
+	console.log(
+		chalk.blue.bold("folderator: quickly work in a subset of folders")
+	);
+	console.log(chalk.yellow("Usage: folderator <folder-list-file>"));
+	console.log(
+		chalk.gray(
+			"    where folder-list-file : file containing list of folders (one per line)"
+		)
+	);
+	console.log();
 	process.exit(2);
 }
 const folderator = new Folderator(foldersFile);
