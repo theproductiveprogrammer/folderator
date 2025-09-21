@@ -36,35 +36,50 @@ npm run dev <folder-list-file>
 
 ### Folder List File
 
-Create a text file with one folder path per line:
+Create a text file with one folder path per line. You can also use custom names for aliases:
 
 ```
 /Users/username/projects/project1
 /Users/username/projects/project2
 /Users/username/documents/work
+my-custom-name: ../../path
+another-project: /Users/username/special-project
 ```
 
 ### Generated Commands
 
 The tool generates:
 - `go-<folder-name>` aliases for each folder
+- `go-<custom-name>` aliases for named lines (e.g., `go-my-custom-name`)
 - An `iterate` function to run commands across all folders
+
+### Named Lines
+
+Use the `name: path` format to specify custom alias names:
+
+- `my-project: /path/to/folder` - Creates alias `go-my-project`
+- `backend: ../../relative/path` - Creates alias `go-backend`
+- Regular lines without `name:` use the folder basename automatically
 
 ### Example
 
 ```bash
-# Create a folder list
+# Create a folder list with named lines
 echo "/Users/username/projects/app1
-/Users/username/projects/app2" > my-folders.txt
+/Users/username/projects/app2
+my-custom-name: ../../my-custom-folder
+backend: /Users/username/special-project" > my-folders.txt
 
 # Run folderator
 npm run dev my-folders.txt
 
 # In the generated shell:
-go-app1          # Navigate to app1
-go-app2          # Navigate to app2
-iterate          # Interactive iteration through all folders
-iterate "git status"  # Run git status in all folders
+go-app1              # Navigate to app1
+go-app2              # Navigate to app2
+go-my-custom-name    # Navigate to ../../my-custom-folder
+go-backend           # Navigate to /Users/username/special-project
+iterate              # Interactive iteration through all folders
+iterate "git status" # Run git status in all folders
 ```
 
 ## Development

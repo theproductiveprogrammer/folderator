@@ -14,6 +14,7 @@ import chalk from "chalk";
 interface AliasPair {
 	alias: string;
 	path: string;
+	name?: string; // Optional custom name for the alias
 }
 
 interface FolderatorConfig {
@@ -72,6 +73,10 @@ class Folderator {
 			)
 		);
 		console.log();
+		console.log(
+			chalk.gray(`    Use "name: /path/to/folder" for custom alias names`)
+		);
+		console.log();
 	}
 
 	private loadFolders(): void {
@@ -106,8 +111,31 @@ class Folderator {
 		}
 	}
 
-	private resolvePaths(): void {
-		this.config.absPaths = this.config.lines.map(this.resolvePath);
+	private parseFolderLine(line: string): { path: string; name?: string } {
+		const trimmedLine = line.trim();
+
+		// Check if line has the "name:" format
+		const colonIndex = trimmedLine.indexOf(":");
+		if (colonIndex > 0) {
+			const name = trimmedLine.substring(0, colonIndex).trim();
+			const pathPart = trimmedLine.substring(colonIndex + 1).trim();
+
+			if (!name) {
+				throw new Error(
+					`Invalid named line format: "${line}" - name is empty before ":"`
+				);
+			}
+			if (!pathPart) {
+				throw new Error(
+					`Invalid named line format: "${line}" - path is empty after ":"`
+				);
+			}
+
+			return { path: pathPart, name };
+		}
+
+		// Regular line - no custom name
+		return { path: trimmedLine };
 	}
 
 	private slugify(basename: string): string {
@@ -117,8 +145,8 @@ class Folderator {
 		return s;
 	}
 
-	private makeAliasName(p: string): string {
-		const base = path.basename(p) || p.replace(/[\/\\]+/g, "_");
+	private makeAliasName(p: string, customName?: string): string {
+		const base = customName || path.basename(p) || p.replace(/[\/\\]+/g, "_");
 		let slug = this.slugify(base);
 		let alias = `go-${slug}`;
 		let i = 2;
@@ -132,10 +160,27 @@ class Folderator {
 	}
 
 	private generateAliases(): void {
-		this.config.aliasPairs = this.config.absPaths.map((p: string) => ({
-			alias: this.makeAliasName(p),
-			path: p,
-		}));
+		this.config.aliasPairs = this.config.lines.map((line: string) => {
+			try {
+				const { path: folderPath, name } = this.parseFolderLine(line);
+				const resolvedPath = this.resolvePath(folderPath);
+				const aliasPair: AliasPair = {
+					alias: this.makeAliasName(resolvedPath, name),
+					path: resolvedPath,
+				};
+				if (name) {
+					aliasPair.name = name;
+				}
+				return aliasPair;
+			} catch (error) {
+				console.error(
+					chalk.red.bold("❌ Error parsing line:"),
+					chalk.yellow(`"${line}"`),
+					chalk.red(error instanceof Error ? error.message : "Unknown error")
+				);
+				process.exit(2);
+			}
+		});
 	}
 
 	private escapePath(p: string): string {
@@ -213,9 +258,11 @@ fi
 		console.log(chalk.blue.bold("📁"), chalk.blue.bold(this.config.currName));
 		console.log(chalk.green.bold("✨ Commands available:"));
 		for (const alias of this.config.aliasPairs) {
+			const displayName = alias.name ? chalk.cyan(`(${alias.name})`) : "";
 			console.log(
 				chalk.gray("    "),
 				chalk.blue(alias.alias),
+				displayName,
 				chalk.gray("→"),
 				chalk.dim(alias.path)
 			);
@@ -255,7 +302,6 @@ fi
 	public run(): void {
 		this.validateInput();
 		this.loadFolders();
-		this.resolvePaths();
 		this.generateAliases();
 
 		const tmpDir = this.createTempEnvironment();
@@ -280,6 +326,10 @@ if (!foldersFile) {
 		chalk.gray(
 			"    where folder-list-file : file containing list of folders (one per line)"
 		)
+	);
+	console.log();
+	console.log(
+		chalk.gray('    Use "name: /path/to/folder" for custom alias names')
 	);
 	console.log();
 	process.exit(2);
