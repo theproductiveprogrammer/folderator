@@ -118,7 +118,7 @@ fs.writeFileSync(zshrcPath, zshrc, { mode: 0o600 });
 
 const child = spawn("zsh", ["-i"], {
   stdio: "inherit",
-  env: { ...process.env, ZDOTDIR: tmpDir, PROMPT_CHAR: "$>" },
+  env: { ...process.env, ZDOTDIR: tmpDir, PROMPT_CHAR: `$${foldersFile}>` },
 });
 
 child.on("exit", () => {
