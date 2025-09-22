@@ -185,10 +185,10 @@ __FOLDERATOR_DIRS=(\n`;
         // iterate function
         zshrc += `
 iterate() {
-  OLD_PROMPT_CHAR="$PROMPT_CHAR"
+  OLD_FOLDERATOR_PROMPT="$FOLDERATOR_PROMPT"
   if (( $# == 0 )); then
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
-      export PROMPT_CHAR='$(itr)>'
+      export FOLDERATOR_PROMPT='$(itr)>'
       (cd "$d" && echo "\\033[1;34m📁 Iterating subshell in $d (exit to continue)\\033[0m" && $SHELL)
     done
   else
@@ -198,7 +198,7 @@ iterate() {
       (cd "$d" && eval "$cmd")
     done
   fi
-  PROMPT_CHAR="$OLD_PROMPT_CHAR"
+  FOLDERATOR_PROMPT="$OLD_FOLDERATOR_PROMPT"
 }
 `;
         // Source the existing ~/.zshrc
@@ -240,7 +240,7 @@ fi
             env: {
                 ...process.env,
                 ZDOTDIR: tmpDir,
-                PROMPT_CHAR: `$>`,
+                FOLDERATOR_PROMPT: `$>`,
             },
         });
     }
