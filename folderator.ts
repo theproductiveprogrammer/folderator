@@ -211,7 +211,7 @@ iterate() {
   OLD_PROMPT_CHAR="$PROMPT_CHAR"
   if (( $# == 0 )); then
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
-      export PROMPT_CHAR='$${this.config.currName}-(itr)>'
+      export PROMPT_CHAR='$(itr)>'
       (cd "$d" && echo "\\033[1;34m📁 Iterating subshell in $d (exit to continue)\\033[0m" && $SHELL)
     done
   else
@@ -281,7 +281,7 @@ fi
 			env: {
 				...process.env,
 				ZDOTDIR: tmpDir,
-				PROMPT_CHAR: `$${this.config.currName}>`,
+				PROMPT_CHAR: `$>`,
 			},
 		});
 	}
