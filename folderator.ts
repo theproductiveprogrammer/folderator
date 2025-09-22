@@ -212,12 +212,12 @@ iterate() {
   if (( $# == 0 )); then
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
       export PROMPT_CHAR='$${this.config.currName}-(itr)>'
-      (cd "$d" && echo "\\033[1;36m📁 Iterating subshell in $d (exit to continue)\\033[0m" && $SHELL)
+      (cd "$d" && echo "\\033[1;34m📁 Iterating subshell in $d (exit to continue)\\033[0m" && $SHELL)
     done
   else
     local cmd="$*"
     for d in "\${__FOLDERATOR_DIRS[@]}"; do
-      echo "\\033[1;33m=== $d ===\\033[0m"
+      echo "\\033[1;34m=== $d ===\\033[0m"
       (cd "$d" && eval "$cmd")
     done
   fi
