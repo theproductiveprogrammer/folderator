@@ -222,6 +222,7 @@ iterate() {
     done
   fi
   FOLDERATOR_PROMPT="$OLD_FOLDERATOR_PROMPT"
+  echo "\\033[1;35mIteration done!\\033[0m"
 }
 `;
 
